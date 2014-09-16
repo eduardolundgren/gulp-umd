@@ -1,0 +1,34 @@
+{
+  "name": "gulp-umd",
+  "version": "0.1.0",
+  "description": "Gulp plugin for build JavaScript files as Universal Module Definition, aka UMD.",
+  "license": "MIT",
+  "repository": "eduardolundgren/gulp-umd",
+  "author": {
+    "name": "Eduardo Lundgren",
+    "email": "edua@rdo.io",
+    "url": "http://eduardo.io"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "nodeunit test/test.js"
+  },
+  "keywords": [
+    "amd",
+    "commonjs",
+    "gulpplugin",
+    "umd",
+    "wrap"
+  ],
+  "dependencies": {
+    "event-stream": "^3.1.7",
+    "gulp": "^3.8.8",
+    "gulp-util": "^3.0.1",
+    "lodash.template": "^2.4.1"
+  }
+}
