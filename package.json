@@ -1,6 +1,6 @@
 {
   "name": "gulp-umd",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Gulp plugin for build JavaScript files as Universal Module Definition, aka UMD.",
   "license": "MIT",
   "repository": "eduardolundgren/gulp-umd",
