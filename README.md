@@ -25,7 +25,7 @@ The following options are the ones available with the current default values:
 
 ```js
 {
-  dependencies: function() {
+  dependencies: function(file) {
     return [];
   },
   exports: function(file) {
@@ -91,7 +91,7 @@ function Foo() {}
 Then, in the gulp task:
 
 ```js
-gulp.task('umd', function() {
+gulp.task('umd', function(file) {
   return gulp.src('src/*.js')
     .pipe(umd({
         dependencies: function(file) {
