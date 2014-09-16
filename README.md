@@ -17,7 +17,7 @@ The UMD pattern typically attempts to offer compatibility with the most popular 
   scripts that still expect that global), use
   [returnExportsGlobal.js](https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js).
 
-See more variantion options that can be added as [templates onto this project](https://github.com/gulp-umd/blob/master/templates) on the [UMD (Universal Module Definition) patterns](https://github.com/umdjs/umd).
+See more variantion options that can be added as [templates onto this project](https://github.com/eduardolundgren/gulp-umd/tree/master/templates) on the [UMD (Universal Module Definition) patterns](https://github.com/umdjs/umd).
 
 ## Options
 
