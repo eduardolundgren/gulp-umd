@@ -59,7 +59,7 @@ gulp.task('umd', function() {
 });
 ```
 
-After build `build/foo.js will look like:
+After build `build/foo.js` will look like:
 
 ```js
 (function(root, factory) {
