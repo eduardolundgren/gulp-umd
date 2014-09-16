@@ -94,7 +94,7 @@ Then, in the gulp task:
 gulp.task('umd', function() {
   return gulp.src('src/*.js')
     .pipe(umd({
-        dependencies: function() {
+        dependencies: function(file) {
           return [
             {
               name: 'moduleName1',
