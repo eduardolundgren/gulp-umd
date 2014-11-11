@@ -20,7 +20,7 @@ var defaultOptions = {
 
   /* null or string
    * null is auto mode (detect by code)
-   * string is indent string, examples: '  ', '    ', '[TAB]' */
+   * string is indent string, examples: '  ', '    ', '\t' */
   indent: null,
 
   /* if "indent" option is null (auto mode) and can't detect indent by code
@@ -52,9 +52,9 @@ function buildFileTemplateData(file, options) {
         param: dep
       };
     }
-    amd.push('\'' + (dep.amd || dep.name) + '\'');
-    cjs.push('require(\'' + (dep.cjs || dep.name) + '\')');
-    global.push('root.' + (dep.global || dep.name));
+    amd.push(dep.amd || dep.name);
+    cjs.push(dep.cjs || dep.name);
+    global.push(dep.global || dep.name);
     param.push(dep.param || dep.name);
   });
 
@@ -63,10 +63,10 @@ function buildFileTemplateData(file, options) {
     exports: options.exports(file),
     namespace: options.namespace(file),
     // Adds resolved dependencies for each environment into the template data
-    amd: '[' + amd.join(', ') + ']',
-    cjs: cjs.join(', '),
-    global: global.join(', '),
-    param: param.join(', '),
+    amd: amd,
+    cjs: cjs,
+    global: global,
+    param: param,
     // =======================================================================
     indent: options.indent,
     defaultIndentValue: options.defaultIndentValue
@@ -87,12 +87,11 @@ function extend(target, source) {
 }
 
 function prepareIndent(options) {
-  var indentMatch;
-
   if (typeof options.contents !== 'string') {
     throw new Error('"contents" option must be a string.');
   }
 
+  var indentMatch;
   if (options.indent === null) {
     // auto detect by code
     indentMatch = options.contents.match(/^([ \t])/);
@@ -103,7 +102,6 @@ function prepareIndent(options) {
   }
 
   var getContentsWithIndent;
-
   (function (contents, indent) {
     getContentsWithIndent = function (count) {
       var indentStr = '';
