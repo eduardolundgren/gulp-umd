@@ -111,7 +111,8 @@ function prepareIndent(options) {
       return contents
         .replace(/\r\n/g, '\n')
         .replace(/\r/g, '\n')
-        .replace(/\n/g, '\n' + indentStr);
+        .replace(/\n/g, '\n' + indentStr)
+        .replace(/^[ \t]+$/gm, '');
     };
   })(options.contents.toString(), options.indent);
 
