@@ -21,7 +21,16 @@ var defaultOptions = {
 
 function umd(options) {
   options = extend(extend({}, defaultOptions), options);
-  var template = fs.readFileSync(options.template);
+
+  var template;
+
+  if(options.templateSource) {
+    template = options.templateSource
+  }
+  else {
+    template = fs.readFileSync(options.template);
+  }
+
   return es.map(function(file, callback) {
     wrap(file, template, buildFileTemplateData(file, options), callback);
   });

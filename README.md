@@ -34,7 +34,8 @@ The following options are the ones available with the current default values:
   namespace: function(file) {
     return capitalizeFilename(file);
   },
-  template: path.join(__dirname, 'templates/returnExports.js')
+  template: path.join(__dirname, 'templates/returnExports.js'),
+  templateSource: 'module.exports = <%= exports %>'
 }
 ```
 
@@ -192,6 +193,8 @@ In order to use any of the variations defined on the [UMD (Universal Module Defi
 * `<%= global %>`: Contains the browser globals normalized values from the options dependencies array, e.g. `['a', 'b']` turns into `root.a, root.b`.
 * `<%= namespace %>`: The namespace where the exported value is going to be set on the browser, e.g. `root.Foo.Bar`.
 * `<%= exports %>`: What the module should return, e.g. `Foo.Bar`. By default it returns the filename with uppercase without extension, e.g. `foo.js` returns `Foo`.
+
+You can also use [umd-templates](https://www.npmjs.com/package/umd-templates), using the `patternName.path` property if `template` option is used, and `patternName.template` if `templateSource` is used. 
 
 ## Contributing
 
