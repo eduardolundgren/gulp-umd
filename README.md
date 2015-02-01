@@ -55,7 +55,7 @@ Then, in the gulp task:
 gulp.task('umd', function() {
   return gulp.src('src/*.js')
     .pipe(umd())
-    .dest('build');
+    .pipe(gulp.dest('build'));
 });
 ```
 
@@ -113,7 +113,7 @@ gulp.task('umd', function(file) {
           ];
         }
       }))
-    .dest('build');
+    .pipe(gulp.dest('build'));
 });
 ```
 
@@ -160,7 +160,7 @@ gulp.task('umd', function() {
           return 'Foo.Bar';
         }
     }))
-    .dest('build');
+    .pipe(gulp.dest('build'));
 });
 ```
 
