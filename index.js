@@ -16,7 +16,16 @@ var defaultOptions = {
   namespace: function(file) {
     return capitalizeFilename(file);
   },
-  template: path.join(__dirname, 'templates/returnExports.js')
+  template: path.join(__dirname, 'templates/returnExports.js'),
+
+  /* null or string
+   * null is auto mode (detect by code)
+   * string is indent string, examples: '  ', '    ', '\t' */
+  indent: null,
+
+  /* if "indent" option is null (auto mode) and can't detect indent by code
+   * then uses this value for "indent" option as default. */
+  defaultIndentValue: '  '
 };
 
 function umd(options) {
@@ -43,9 +52,9 @@ function buildFileTemplateData(file, options) {
         param: dep
       };
     }
-    amd.push('\'' + (dep.amd || dep.name) + '\'');
-    cjs.push('require(\'' + (dep.cjs || dep.name) + '\')');
-    global.push('root.' + (dep.global || dep.name));
+    amd.push(dep.amd || dep.name);
+    cjs.push(dep.cjs || dep.name);
+    global.push(dep.global || dep.name);
     param.push(dep.param || dep.name);
   });
 
@@ -54,11 +63,13 @@ function buildFileTemplateData(file, options) {
     exports: options.exports(file),
     namespace: options.namespace(file),
     // Adds resolved dependencies for each environment into the template data
-    amd: '[' + amd.join(', ') + ']',
-    cjs: cjs.join(', '),
-    global: global.join(', '),
-    param: param.join(', ')
+    amd: amd,
+    cjs: cjs,
+    global: global,
+    param: param,
     // =======================================================================
+    indent: options.indent,
+    defaultIndentValue: options.defaultIndentValue
   };
 }
 
@@ -75,6 +86,39 @@ function extend(target, source) {
   return target;
 }
 
+function prepareIndent(options) {
+  if (typeof options.contents !== 'string') {
+    throw new Error('"contents" option must be a string.');
+  }
+
+  var indentMatch;
+  if (options.indent === null) {
+    // auto detect by code
+    indentMatch = options.contents.match(/^([ \t])/);
+    options.indent =
+      (indentMatch) ? indentMatch[1] : options.defaultIndentValue;
+  } else if (typeof options.indent !== 'string') {
+    throw new Error('Unknown type of "indent" option value.');
+  }
+
+  var getContentsWithIndent;
+  (function (contents, indent) {
+    getContentsWithIndent = function (count) {
+      var indentStr = '';
+      for (var i=0; i<count; i++) {
+        indentStr += indent;
+      }
+      return contents
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .replace(/\n/g, '\n' + indentStr)
+        .replace(/^[ \t]+$/gm, '');
+    };
+  })(options.contents.toString(), options.indent);
+
+  options.getContentsWithIndent = getContentsWithIndent;
+}
+
 function wrap(file, template, data, callback) {
   data.file = file;
 
@@ -82,6 +126,7 @@ function wrap(file, template, data, callback) {
     var through = es.through();
     var wait = es.wait(function(err, contents) {
       data.contents = contents;
+      prepareIndent(data);
       through.write(tpl(template, data));
       through.end();
     });
@@ -91,8 +136,10 @@ function wrap(file, template, data, callback) {
 
   if (gutil.isBuffer(file.contents)) {
     data.contents = file.contents.toString();
+    prepareIndent(data);
     file.contents = new Buffer(tpl(template, data));
   }
+
   callback(null, file);
 }
 
