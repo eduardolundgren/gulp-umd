@@ -58,7 +58,7 @@ The following options are the ones available with the current default values:
 }
 ```
 
-* ```dependencies```
+* `dependencies`:
   Function which returns an array of dependencies.
   Each dependency is specified either as a string, or as an object of the form.
   ```js
@@ -74,7 +74,7 @@ The following options are the ones available with the current default values:
   }
   ```
   
-* ```exports```
+* `exports`:
   Specifies the item (or for CommonJS, *item's*) which the module will export.
   For non CommonJS, this value should be a string specifying the exported item.
   ```js
@@ -96,7 +96,7 @@ The following options are the ones available with the current default values:
   }
   ```
 
-* ```namespace```
+* `namespace`:
   Specifies the global namespace to export to. Only used for Web globals.
   ```js
   {
@@ -106,7 +106,7 @@ The following options are the ones available with the current default values:
   }
   ```
 
-* ```templateName```
+* `templateName`:
   Specifies the name of the template to use.
   Available template names are amd, amdNodeWeb, amdCommonWeb, amdWeb, common, node, returnExports and web. 
   *See above for descriptions.*
@@ -117,7 +117,7 @@ The following options are the ones available with the current default values:
   }
   ```
 
-* ```templateSource```
+* `templateSource`:
   Specifies the lodash template source to use when wrapping input files.
   If specified, overrides template.
   ```js
@@ -126,7 +126,7 @@ The following options are the ones available with the current default values:
   }
   ```
     
-* ```template```
+* `template`:
   Specifies the path to a file containing a lodash template to use when wrapping input files.
   ```
   {
