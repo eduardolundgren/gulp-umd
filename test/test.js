@@ -13,7 +13,7 @@ var genericTest = function (options,compareFilepath) {
       assertFilesContents(test, files[0], compareFilepath);
       test.done();
     }));
-  }
+  };
 };
 
 module.exports = {

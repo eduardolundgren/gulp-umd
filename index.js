@@ -26,14 +26,14 @@ function umd(options) {
 
   if(options.templateName) {
     template = options.templateName;
-    if (template == 'amdNodeWeb') {
+    if (template === 'amdNodeWeb') {
       template = 'returnExports';
     }
     template = path.join(__dirname, 'templates/' + template + '.js');
     template = fs.readFileSync(template);
   }
   else if(options.templateSource) {
-    template = options.templateSource
+    template = options.templateSource;
   }
   else {
     template = fs.readFileSync(options.template);
@@ -52,7 +52,6 @@ function buildFileTemplateData(file, options) {
   var requires = [];
   var dependencies = options.dependencies(file);
   var commaPrefix;
-  var semiSuffix;
 
   dependencies.forEach(function(dep) {
     if (typeof dep === 'string') {
@@ -67,7 +66,7 @@ function buildFileTemplateData(file, options) {
     cjs.push('require(\'' + (dep.cjs || dep.name) + '\')');
     global.push('root.' + (dep.global || dep.name));
     param.push(dep.param || dep.name);
-    requires.push((dep.param || dep.name) + '=require(\'' + (dep.cjs || dep.name) + '\')')
+    requires.push((dep.param || dep.name) + '=require(\'' + (dep.cjs || dep.name) + '\')');
   });
 
   commaPrefix = function (items) {
