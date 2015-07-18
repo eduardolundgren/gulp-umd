@@ -11,7 +11,7 @@ The UMD pattern typically attempts to offer compatibility with the most popular 
 
 ### Regular Module
 
-* `amdNodeWeb / returnExports / [templates/returnExports.js](https://github.com/umdjs/umd/blob/master/returnExports.js) -
+* amdNodeWeb / returnExports / [templates/returnExports.js](https://github.com/umdjs/umd/blob/master/returnExports.js) -
   Defines a module that works in Node, AMD and browser globals. If you also want
   to export a global even when AMD is in play (useful if you are loading other
   scripts that still expect that global), use
