@@ -24,7 +24,15 @@ function umd(options) {
 
   var template;
 
-  if(options.templateSource) {
+  if(options.templateName) {
+    template = options.templateName;
+    if (template == 'amdNodeWeb') {
+      template = 'returnExports';
+    }
+    template = path.join(__dirname, 'templates/' + template + '.js');
+    template = fs.readFileSync(template);
+  }
+  else if(options.templateSource) {
     template = options.templateSource
   }
   else {
@@ -41,7 +49,10 @@ function buildFileTemplateData(file, options) {
   var cjs = [];
   var global = [];
   var param = [];
+  var requires = [];
   var dependencies = options.dependencies(file);
+  var commaPrefix;
+  var semiSuffix;
 
   dependencies.forEach(function(dep) {
     if (typeof dep === 'string') {
@@ -56,7 +67,14 @@ function buildFileTemplateData(file, options) {
     cjs.push('require(\'' + (dep.cjs || dep.name) + '\')');
     global.push('root.' + (dep.global || dep.name));
     param.push(dep.param || dep.name);
+    requires.push((dep.param || dep.name) + '=require(\'' + (dep.cjs || dep.name) + '\')')
   });
+
+  commaPrefix = function (items) {
+    return items.map(function (value) {
+      return ', ' + value;
+    }).join('');
+  };
 
   return {
     dependencies: dependencies,
@@ -65,8 +83,11 @@ function buildFileTemplateData(file, options) {
     // Adds resolved dependencies for each environment into the template data
     amd: '[' + amd.join(', ') + ']',
     cjs: cjs.join(', '),
+    commaCjs: commaPrefix(cjs),
     global: global.join(', '),
-    param: param.join(', ')
+    commaGlobal: commaPrefix(global),
+    param: param.join(', '),
+    commaParam: commaPrefix(param)
     // =======================================================================
   };
 }
