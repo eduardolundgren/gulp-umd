@@ -7,8 +7,6 @@ This repository provides a simple way to build your files with support for the d
 
 The UMD pattern typically attempts to offer compatibility with the most popular script loaders of the day (e.g RequireJS amongst others). In many cases it uses [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) as a base, with special-casing added to handle [CommonJS](http://wiki.commonjs.org/wiki/CommonJS) compatibility.
 
-*Now with source map support!*
-
 ## Variations
 
 ### Regular Module
