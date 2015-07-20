@@ -4,11 +4,20 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var umd = require('../');
 var fs = require('fs');
+var sourceMaps = require('gulp-sourcemaps');
+var coffee = require('gulp-coffee');
+var rename = require('gulp-rename');
+var gif = require('gulp-if');
 
-var genericTest = function (options,compareFilepath) {
+// Set to true to re-write output files. Useful when modifying the templates.
+var REWRITE_OUTPUT = false;
+
+var genericTest = function (options,compareFilepath,rewriteOutput) {
   return function (test) {
-    gulp.src('test/fixture/foo.js')
+    var pipeLine = gulp.src('test/fixture/foo.js')
     .pipe(umd(options))
+    .pipe(gif(rewriteOutput || REWRITE_OUTPUT, rename(compareFilepath)))
+    .pipe(gif(rewriteOutput || REWRITE_OUTPUT, gulp.dest(__dirname + '/fixture/')))
     .pipe(gutil.buffer(function(err, files) {
       assertFilesContents(test, files[0], compareFilepath);
       test.done();
@@ -17,7 +26,7 @@ var genericTest = function (options,compareFilepath) {
 };
 
 module.exports = {
-  /* Generic test structure
+  /* Generic test structure. Copy+Paste to create the basic test suite for a new template
   misc: {
     testExports: genericTest(
       {
@@ -456,6 +465,22 @@ module.exports = {
       },
       'web/testWithoutDependencies.js'
     )
+  },
+
+  sourceMaps: {
+    adjust: function (test) {
+      gulp.src('test/fixture/bar.coffee')
+      .pipe(sourceMaps.init())
+      .pipe(coffee())
+      .pipe(umd())
+      .pipe(sourceMaps.write())
+      .pipe(gif(REWRITE_OUTPUT, rename('adjust.js')))
+      .pipe(gif(REWRITE_OUTPUT, gulp.dest(__dirname + '/fixture/sourceMaps/')))
+      .pipe(gutil.buffer(function(err, files) {
+        assertFilesContents(test, files[0], 'sourceMaps/adjust.js');
+        test.done();
+      }));
+    }
   }
 };
 
