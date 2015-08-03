@@ -120,7 +120,53 @@ function wrap(file, template, data, callback) {
 
   if (gutil.isBuffer(file.contents)) {
     data.contents = file.contents.toString();
+
+    if (file.sourceMap) {
+      (function () {
+        var sourceMap = require('source-map');
+        var applySourceMap = require('vinyl-sourcemaps-apply');
+        var generator = new sourceMap.SourceMapGenerator(file.sourceMap);
+        var consumer = new sourceMap.SourceMapConsumer(file.sourceMap);
+        var output;
+        var ilineAdustment = 0;
+        var correctContents = data.contents;
+        var correctContentsNewLines = correctContents.split('\n').length - 1;
+
+        // f8b4dd18-72da-4e25-80bb-451b67a88dba is just a magic number to find where the contents is being placed.
+        // It's a bit of a hack, but should cover 99% of use cases
+
+        data.contents = 'f8b4dd18-72da-4e25-80bb-451b67a88dba';
+        output = tpl(template, data);
+
+        output = output.split('\n').map(function (line, iline) {
+          return line.replace(/f8b4dd18-72da-4e25-80bb-451b67a88dba/g, function () {
+            consumer.eachMapping(function (mapping) {
+              return generator.addMapping({
+                generated: {
+                  line: mapping.generatedLine + iline + ilineAdustment,
+                  column: mapping.generatedColumn + (mapping.generatedLine == 1 ? (iline + ilineAdustment) : 0) // adjust first line
+                },
+                original: {
+                  line: mapping.originalLine,
+                  column: mapping.originalColumn
+                },
+                source: mapping.source,
+                name: mapping.name
+              });
+            });
+            ilineAdustment += correctContentsNewLines;
+            return correctContents;
+          });
+        }).join('\n');
+
+        file.contents = new Buffer(output);
+        applySourceMap(file, generator.toString());
+      })();
+    }
+    else {
     file.contents = new Buffer(tpl(template, data));
+    }
+
   }
   callback(null, file);
 }
