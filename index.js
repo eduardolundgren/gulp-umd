@@ -2,7 +2,6 @@
 
 var es = require('event-stream');
 var fs = require('fs');
-var gutil = require('gulp-util');
 var path = require('path');
 var tpl = require('lodash.template');
 
@@ -107,7 +106,7 @@ function extend(target, source) {
 function wrap(file, template, data, callback) {
   data.file = file;
 
-  if (gutil.isStream(file.contents)) {
+  if (file.isStream()) {
     var through = es.through();
     var wait = es.wait(function(err, contents) {
       data.contents = contents;
@@ -116,9 +115,7 @@ function wrap(file, template, data, callback) {
     });
     file.contents.pipe(wait);
     file.contents = through;
-  }
-
-  if (gutil.isBuffer(file.contents)) {
+  } else if (file.isBuffer()) {
     data.contents = file.contents.toString();
     file.contents = new Buffer(tpl(template, data));
   }

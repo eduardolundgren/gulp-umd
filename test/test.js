@@ -1,7 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
-var gutil = require('gulp-util');
+var concat = require('concat-stream');
 var umd = require('../');
 var fs = require('fs');
 
@@ -9,7 +9,7 @@ var genericTest = function (options,compareFilepath) {
   return function (test) {
     gulp.src('test/fixture/foo.js')
     .pipe(umd(options))
-    .pipe(gutil.buffer(function(err, files) {
+    .pipe(concat({encoding: 'object'}, function(files) {
       assertFilesContents(test, files[0], compareFilepath);
       test.done();
     }));
