@@ -33,7 +33,7 @@
     "lodash.template": "^2.4.1"
   },
   "devDependencies": {
-    "concat-stream": "^1.6.0",
+    "concat-stream": "^1.6.2",
     "gulp": "^3.9.1",
     "nodeunit": "^0.11.2"
   }
