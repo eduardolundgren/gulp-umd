@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "event-stream": "^3.3.4",
-    "lodash.template": "^2.4.1"
+    "lodash.template": "^4.4.0"
   },
   "devDependencies": {
     "concat-stream": "^1.6.2",

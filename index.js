@@ -3,7 +3,7 @@
 var es = require('event-stream');
 var fs = require('fs');
 var path = require('path');
-var tpl = require('lodash.template');
+var _template = require('lodash.template');
 
 var defaultOptions = {
   dependencies: function() {
@@ -21,25 +21,27 @@ var defaultOptions = {
 function umd(options) {
   options = Object.assign({}, defaultOptions, options);
 
-  var template;
+  var text;
 
   if(options.templateName) {
-    template = options.templateName;
-    if (template === 'amdNodeWeb') {
-      template = 'returnExports';
+    text = options.templateName;
+    if (text === 'amdNodeWeb') {
+      text = 'returnExports';
     }
-    template = path.join(__dirname, 'templates/' + template + '.js');
-    template = fs.readFileSync(template);
+    text = path.join(__dirname, 'templates/' + text + '.js');
+    text = fs.readFileSync(text);
   }
   else if(options.templateSource) {
-    template = options.templateSource;
+    text = options.templateSource;
   }
   else {
-    template = fs.readFileSync(options.template);
+    text = fs.readFileSync(options.template);
   }
 
+  var compiled = _template(text);
+
   return es.mapSync(function(file) {
-    return wrap(file, template, buildFileTemplateData(file, options));
+    return wrap(file, compiled, buildFileTemplateData(file, options));
   });
 }
 
@@ -102,14 +104,14 @@ function wrap(file, template, data) {
     var through = es.through();
     var wait = es.wait(function(err, contents) {
       data.contents = contents;
-      through.write(tpl(template, data));
+      through.write(template(data));
       through.end();
     });
     file.contents.pipe(wait);
     file.contents = through;
   } else if (file.isBuffer()) {
     data.contents = file.contents.toString();
-    file.contents = new Buffer(tpl(template, data));
+    file.contents = new Buffer(template(data));
   }
 
   return file;
