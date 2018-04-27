@@ -19,7 +19,7 @@ var defaultOptions = {
 };
 
 function umd(options) {
-  options = extend(extend({}, defaultOptions), options);
+  options = Object.assign({}, defaultOptions, options);
 
   var template;
 
@@ -93,14 +93,6 @@ function buildFileTemplateData(file, options) {
 function capitalizeFilename(file) {
   var name = path.basename(file.path, path.extname(file.path));
   return name.charAt(0).toUpperCase() + name.substring(1);
-}
-
-function extend(target, source) {
-  source = source || {};
-  for (var key in source) {
-    target[key] = source[key];
-  }
-  return target;
 }
 
 function wrap(file, template, data) {
