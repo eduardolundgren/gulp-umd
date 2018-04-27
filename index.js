@@ -15,7 +15,7 @@ var defaultOptions = {
   namespace: function(file) {
     return capitalizeFilename(file);
   },
-  template: path.join(__dirname, 'templates/returnExports.js')
+  template: path.join(__dirname, 'templates', 'returnExports.js')
 };
 
 function umd(options) {
@@ -28,7 +28,7 @@ function umd(options) {
     if (text === 'amdNodeWeb') {
       text = 'returnExports';
     }
-    text = path.join(__dirname, 'templates/' + text + '.js');
+    text = path.join(__dirname, 'templates', text + '.js');
     text = fs.readFileSync(text);
   }
   else if(options.templateSource) {
