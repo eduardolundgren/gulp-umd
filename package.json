@@ -29,11 +29,11 @@
     "wrap"
   ],
   "dependencies": {
-    "event-stream": "^3.3.4",
-    "lodash.template": "^4.4.0"
+    "concat-stream": "^1.6.2",
+    "lodash.template": "^4.4.0",
+    "through2": "^2.0.3"
   },
   "devDependencies": {
-    "concat-stream": "^1.6.2",
     "gulp": "^3.9.1",
     "nodeunit": "^0.11.2"
   }

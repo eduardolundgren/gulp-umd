@@ -1,9 +1,10 @@
 'use strict';
 
-var es = require('event-stream');
+var concat = require('concat-stream');
 var fs = require('fs');
 var path = require('path');
 var _template = require('lodash.template');
+var through = require('through2');
 
 var defaultOptions = {
   dependencies: function() {
@@ -40,8 +41,8 @@ function umd(options) {
 
   var compiled = _template(text);
 
-  return es.mapSync(function(file) {
-    return wrap(file, compiled, buildFileTemplateData(file, options));
+  return through.obj(function(file, enc, next) {
+    next(null, wrap(file, compiled, buildFileTemplateData(file, options)));
   });
 }
 
@@ -101,14 +102,14 @@ function wrap(file, template, data) {
   data.file = file;
 
   if (file.isStream()) {
-    var through = es.through();
-    var wait = es.wait(function(err, contents) {
-      data.contents = contents;
-      through.write(template(data));
-      through.end();
-    });
-    file.contents.pipe(wait);
-    file.contents = through;
+    var contents = through();
+
+    file.contents.pipe(concat({encoding: 'utf-8'}, function(s) {
+      data.contents = s;
+      contents.push(template(data));
+      contents.push(null);
+    }));
+    file.contents = contents;
   } else if (file.isBuffer()) {
     data.contents = file.contents.toString();
     file.contents = Buffer.from(template(data));
