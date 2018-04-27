@@ -38,8 +38,8 @@ function umd(options) {
     template = fs.readFileSync(options.template);
   }
 
-  return es.map(function(file, callback) {
-    wrap(file, template, buildFileTemplateData(file, options), callback);
+  return es.mapSync(function(file) {
+    return wrap(file, template, buildFileTemplateData(file, options));
   });
 }
 
@@ -103,7 +103,7 @@ function extend(target, source) {
   return target;
 }
 
-function wrap(file, template, data, callback) {
+function wrap(file, template, data) {
   data.file = file;
 
   if (file.isStream()) {
@@ -119,7 +119,8 @@ function wrap(file, template, data, callback) {
     data.contents = file.contents.toString();
     file.contents = new Buffer(tpl(template, data));
   }
-  callback(null, file);
+
+  return file;
 }
 
 module.exports = umd;
