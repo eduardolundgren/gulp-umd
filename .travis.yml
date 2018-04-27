@@ -1,4 +1,6 @@
+sudo: false
 language: node_js
 node_js:
-  - "0.11"
-  - "0.10"
+  - "stable"
+  - "8"
+  - "6"
