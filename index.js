@@ -111,7 +111,7 @@ function wrap(file, template, data) {
     file.contents = through;
   } else if (file.isBuffer()) {
     data.contents = file.contents.toString();
-    file.contents = new Buffer(template(data));
+    file.contents = Buffer.from(template(data));
   }
 
   return file;
