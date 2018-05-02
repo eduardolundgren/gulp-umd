@@ -4,15 +4,41 @@ var gulp = require('gulp');
 var concat = require('concat-stream');
 var umd = require('../');
 var fs = require('fs');
+var path = require('path');
 
-var genericTest = function (options,compareFilepath) {
+var genericTest = function (options, fixtureFilename) {
   return function (test) {
-    gulp.src('test/fixture/foo.js')
-    .pipe(umd(options))
-    .pipe(concat({encoding: 'object'}, function(files) {
-      assertFilesContents(test, files[0], compareFilepath);
-      test.done();
-    }));
+    var isDone = {
+      buffer: false,
+      stream: false
+    };
+    var done = key => {
+      isDone[key] = true;
+      if (isDone.buffer && isDone.stream) {
+        test.done();
+      }
+    };
+    var compare = fs.readFileSync(path.join(__dirname, 'fixture', fixtureFilename), 'utf-8');
+    var assertContents = contents => {
+      test.equal(contents, compare, 'Wrapped file content is different from test template ' + fixtureFilename);
+    };
+
+    gulp.src('test/fixture/foo.js', {buffer: false})
+      .pipe(umd(options))
+      .pipe(concat({encoding: 'object'}, function(files) {
+        var file = files[0];
+        file.contents.pipe(concat({encoding: 'utf-8'}, contents => {
+          assertContents(contents);
+          done('stream');
+        }));
+      }));
+    gulp.src('test/fixture/foo.js', {buffer: true})
+      .pipe(umd(options))
+      .pipe(concat({encoding: 'object'}, function(files) {
+        var file = files[0];
+        assertContents(file.contents.toString());
+        done('buffer');
+      }));
   };
 };
 
@@ -458,11 +484,3 @@ module.exports = {
     )
   }
 };
-
-function assertFilesContents(test, file, compareFilepath) {
-  test.equal(
-    file.contents.toString(),
-    fs.readFileSync(__dirname + '/fixture/' + compareFilepath).toString(),
-    'Wrapped file content is different from test template ' + compareFilepath
-  );
-}
