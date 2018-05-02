@@ -42,7 +42,17 @@ function umd(options) {
   var compiled = _template(text);
 
   return through.obj(function(file, enc, next) {
-    next(null, wrap(file, compiled, buildFileTemplateData(file, options)));
+    var data;
+    var err;
+
+    try {
+      data = buildFileTemplateData(file, options);
+      wrap(file, compiled, data);
+    } catch (e) {
+      err = e;
+    }
+
+    next(err, file);
   });
 }
 
@@ -114,8 +124,6 @@ function wrap(file, template, data) {
     data.contents = file.contents.toString();
     file.contents = Buffer.from(template(data));
   }
-
-  return file;
 }
 
 module.exports = umd;
